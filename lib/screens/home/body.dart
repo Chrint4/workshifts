@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workshifts/common/constants.dart';
+import 'package:workshifts/common/extensions.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -13,15 +14,22 @@ class Body extends StatelessWidget {
   }
 }
 
-class HeaderWithSearchBox extends StatelessWidget {
+class HeaderWithSearchBox extends StatefulWidget {
   const HeaderWithSearchBox({super.key, required this.size});
 
   final Size size;
 
   @override
+  State<HeaderWithSearchBox> createState() => _HeaderWithSearchBoxState();
+}
+
+class _HeaderWithSearchBoxState extends State<HeaderWithSearchBox> {
+  DateTime currentDate = DateTime.now();
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: size.height * 0.2,
+      height: widget.size.height * 0.2,
       // color: Theme.of(context).primaryColor,
       child: Stack(
         children: [
@@ -31,7 +39,7 @@ class HeaderWithSearchBox extends StatelessWidget {
               right: kDefaultPadding,
               bottom: kDefaultPadding + 36,
             ),
-            height: size.height * 0.2 - 27,
+            height: widget.size.height * 0.2 - 27,
             decoration: BoxDecoration(
               color: kPrimaryCol,
               borderRadius: BorderRadius.only(
@@ -98,19 +106,94 @@ class HeaderWithSearchBox extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Expanded(
+                    //   child: GestureDetector(
+                    //     onTap: () async {
+                    //       DateTime? pickedDate = await showDatePicker(
+                    //         context: context,
+                    //         initialDate: DateTime.now(),
+                    //         firstDate: DateTime(2000),
+                    //         lastDate: DateTime(2100),
+                    //       );
+                    //       // Handle pickedDate as needed
+                    //     },
+                    //     child: AbsorbPointer(
+                    //       child: TextField(
+                    //         decoration: InputDecoration(
+                    //           hintText: "Select date",
+                    //           hintStyle: TextStyle(
+                    //             color: kPrimaryCol.withOpacity(0.5),
+                    //           ),
+                    //           enabledBorder: InputBorder.none,
+                    //           focusedBorder: InputBorder.none,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          hintStyle: TextStyle(
-                            color: kPrimaryCol.withOpacity(0.5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.chevron_left),
+                            onPressed: () {
+                              setState(() {
+                                currentDate = currentDate.subtract(
+                                  Duration(days: 1),
+                                );
+                              });
+                            },
                           ),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
+                          InkWell(
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              setState(() {
+                                currentDate = pickedDate ?? currentDate;
+                              });
+                            },
+                            child: AbsorbPointer(
+                              child: Builder(
+                                builder: (context) {
+                                  // Replace with your selected date logic if needed
+                                  // final today = DateTime.now();
+                                  final formatted = currentDate.isToday
+                                      ? "Today"
+                                      : currentDate.toIsoDateString();
+                                  return Text(
+                                    formatted,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: kPrimaryCol,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.chevron_right),
+                            onPressed: () {
+                              setState(() {
+                                currentDate = currentDate.add(
+                                  Duration(days: 1),
+                                );
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.calendar_month),
+                    ),
                   ],
                 ),
               ),
