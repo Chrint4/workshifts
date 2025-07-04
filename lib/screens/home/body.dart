@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workshifts/common/constants.dart';
 import 'package:workshifts/common/extensions.dart';
+import 'package:workshifts/screens/home/header_with_search.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -8,199 +9,216 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-      child: Column(children: [HeaderWithSearchBox(size: size)]),
+    return Column(
+      children: [
+        HeaderWithSearchBox(size: size),
+        Padding(
+          padding: const EdgeInsets.only(top: kDefaultPadding * 2),
+          child: Column(
+            spacing: kDefaultPadding,
+            children: List.generate(7, (index) => DayCard(index: index)),
+          ),
+        ),
+
+        // const SizedBox(height: kDefaultPadding * 1),
+
+        // Expanded(
+        //   child: Stack(
+        //     children: [
+        //       Container(
+        //         decoration: BoxDecoration(color: kPrimaryCol),
+        //         child: Center(
+        //           child: Text(
+        //             'Bottom Bar',
+        //             style: TextStyle(
+        //               color: kBackgroundCol,
+        //               fontSize: 18,
+        //               fontWeight: FontWeight.bold,
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //       Positioned(
+        //         top: -20,
+        //         left: 0,
+        //         right: 0,
+        //         child: Container(
+        //           height: 40,
+        //           decoration: BoxDecoration(
+        //             color: kBackgroundCol,
+        //             borderRadius: BorderRadius.circular(20),
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+      ],
     );
   }
 }
 
-class HeaderWithSearchBox extends StatefulWidget {
-  const HeaderWithSearchBox({super.key, required this.size});
-
-  final Size size;
+class DayCard extends StatelessWidget {
+  const DayCard({super.key, required this.index});
+  final int index;
 
   @override
-  State<HeaderWithSearchBox> createState() => _HeaderWithSearchBoxState();
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: index.isEven ? Alignment.centerLeft : Alignment.centerRight,
+      child: SizedBox(
+        height: kCardHeight,
+        width: MediaQuery.of(context).size.width * 0.80,
+        child: Container(
+          decoration: BoxDecoration(
+            color: kPrimaryCol,
+            borderRadius: BorderRadius.only(
+              topRight: index.isOdd ? Radius.zero : Radius.circular(20),
+              bottomRight: index.isOdd ? Radius.zero : Radius.circular(20),
+              topLeft: index.isEven ? Radius.zero : Radius.circular(20),
+              bottomLeft: index.isEven ? Radius.zero : Radius.circular(20),
+            ),
+
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: index.isEven
+                ? [
+                    CardShortDayDisplay(index: index),
+
+                    VerticalSpacerLine(
+                      width: 1,
+                      height: kCardHeight,
+                      amount: 0.8,
+                    ),
+
+                    DayCardTimeSection(),
+                  ]
+                : [
+                    DayCardTimeSection(),
+                    VerticalSpacerLine(
+                      width: 1,
+                      height: kCardHeight,
+                      amount: 0.8,
+                    ),
+                    CardShortDayDisplay(index: index),
+                  ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _HeaderWithSearchBoxState extends State<HeaderWithSearchBox> {
-  DateTime currentDate = DateTime.now();
+class DayCardTimeSection extends StatelessWidget {
+  const DayCardTimeSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.all(kDefaultPadding / 2),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: const [
+            Column(
+              spacing: kDefaultPadding / 4,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "AM",
+                  style: TextStyle(
+                    color: kBackgroundCol,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Row(
+                  spacing: kDefaultPadding / 4,
+                  children: [
+                    ShiftTimeBox(label: "10:30"),
+                    ShiftTimeBox(label: "11:30"),
+                  ],
+                ),
+              ],
+            ),
+            // Spacer between AM and PM
+            VerticalSpacerLine(
+              width: 1,
+              height: kCardHeight - kDefaultPadding,
+              amount: 0.8,
+            ),
+            // PM Shift
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: kDefaultPadding / 4,
+              children: [
+                Text(
+                  "PM",
+                  style: TextStyle(
+                    color: kBackgroundCol,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Row(
+                  spacing: kDefaultPadding / 4,
+                  children: [
+                    ShiftTimeBox(label: "15:00"),
+                    ShiftTimeBox(label: "19:30"),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CardShortDayDisplay extends StatelessWidget {
+  const CardShortDayDisplay({super.key, required this.index});
+
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.size.height * 0.2,
-      // color: Theme.of(context).primaryColor,
-      child: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.only(
-              left: kDefaultPadding,
-              right: kDefaultPadding,
-              bottom: kDefaultPadding + 36,
-            ),
-            height: widget.size.height * 0.2 - 27,
-            decoration: BoxDecoration(
-              color: kPrimaryCol,
-              borderRadius: BorderRadius.only(
-                bottomRight: Radius.circular(36),
-                bottomLeft: Radius.circular(36),
-              ),
-            ),
-            child: Row(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Hours this Month: ",
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                    ),
-                    Text(
-                      "26",
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 32,
-                          ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.output, color: Colors.white, size: 32),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: kDefaultPadding),
-              height: 54,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 10),
-                    blurRadius: 50,
-                    color: kPrimaryCol.withOpacity(0.23),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: kDefaultPadding,
-                  vertical: 8,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Expanded(
-                    //   child: GestureDetector(
-                    //     onTap: () async {
-                    //       DateTime? pickedDate = await showDatePicker(
-                    //         context: context,
-                    //         initialDate: DateTime.now(),
-                    //         firstDate: DateTime(2000),
-                    //         lastDate: DateTime(2100),
-                    //       );
-                    //       // Handle pickedDate as needed
-                    //     },
-                    //     child: AbsorbPointer(
-                    //       child: TextField(
-                    //         decoration: InputDecoration(
-                    //           hintText: "Select date",
-                    //           hintStyle: TextStyle(
-                    //             color: kPrimaryCol.withOpacity(0.5),
-                    //           ),
-                    //           enabledBorder: InputBorder.none,
-                    //           focusedBorder: InputBorder.none,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.chevron_left),
-                            onPressed: () {
-                              setState(() {
-                                currentDate = currentDate.subtract(
-                                  Duration(days: 1),
-                                );
-                              });
-                            },
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2100),
-                              );
-                              setState(() {
-                                currentDate = pickedDate ?? currentDate;
-                              });
-                            },
-                            child: AbsorbPointer(
-                              child: Builder(
-                                builder: (context) {
-                                  // Replace with your selected date logic if needed
-                                  // final today = DateTime.now();
-                                  final formatted = currentDate.isToday
-                                      ? "Today"
-                                      : currentDate.toIsoDateString();
-                                  return Text(
-                                    formatted,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: kPrimaryCol,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.chevron_right),
-                            onPressed: () {
-                              setState(() {
-                                currentDate = currentDate.add(
-                                  Duration(days: 1),
-                                );
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.calendar_month),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+      width: kCardHeight,
+      child: Text(
+        kWeek[index].short,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: kBackgroundCol,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
       ),
+    );
+  }
+}
+
+// Dummy ShiftTimeBox widget for demonstration; replace with your actual implementation if needed.
+class ShiftTimeBox extends StatelessWidget {
+  final String label;
+  const ShiftTimeBox({super.key, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white24,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(label, style: TextStyle(color: kBackgroundCol, fontSize: 14)),
     );
   }
 }
