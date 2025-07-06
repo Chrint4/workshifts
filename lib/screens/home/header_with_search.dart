@@ -67,7 +67,7 @@ class _HeaderWithSearchBoxState extends State<HeaderWithSearchBox> {
             ),
 
             Positioned(
-              bottom: -20,
+              bottom: -MediaQuery.of(context).size.height * 0.075 * 0.5,
               left: 0,
               right: 0,
               child: SizedBox(

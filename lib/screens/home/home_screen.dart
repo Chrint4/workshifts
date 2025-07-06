@@ -18,4 +18,6 @@ class HomeScreen extends StatelessWidget {
       // backgroundColor: ,
     );
   }
+
+  // PreferredSizeWidget newAppBar() {}
 }
