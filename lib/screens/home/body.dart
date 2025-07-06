@@ -1,59 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:workshifts/common/constants.dart';
 import 'package:workshifts/common/extensions.dart';
-import 'package:workshifts/screens/home/header_with_search.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        // HeaderWithSearchBox(size: size),
-        Padding(
-          padding: const EdgeInsets.only(top: kDefaultPadding * 2),
-          child: Column(
-            spacing: kDefaultPadding / 2,
-            children: List.generate(7, (index) => DayCard(index: index)),
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: kDefaultPadding),
+            child: Column(
+              spacing: kDefaultPadding / 2,
+              children: List.generate(7, (index) => DayCard(index: index)),
+            ),
           ),
-        ),
 
-        // const SizedBox(height: kDefaultPadding * 1),
+          Spacer(),
 
-        // Expanded(
-        //   child: Stack(
-        //     children: [
-        //       Container(
-        //         decoration: BoxDecoration(color: kPrimaryCol),
-        //         child: Center(
-        //           child: Text(
-        //             'Bottom Bar',
-        //             style: TextStyle(
-        //               color: kBackgroundCol,
-        //               fontSize: 18,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       Positioned(
-        //         top: -20,
-        //         left: 0,
-        //         right: 0,
-        //         child: Container(
-        //           height: 40,
-        //           decoration: BoxDecoration(
-        //             color: kBackgroundCol,
-        //             borderRadius: BorderRadius.circular(20),
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-      ],
+          Footer(),
+        ],
+      ),
+    );
+  }
+}
+
+class Footer extends StatelessWidget {
+  const Footer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: kToolbarHeight * 1.5,
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: kToolbarHeight * 1.5,
+              padding: EdgeInsets.only(top: kToolbarHeight / 2),
+              decoration: BoxDecoration(color: kPrimaryCol),
+              child: Center(
+                child: Text(
+                  'Hours this week: 27',
+                  style: TextStyle(
+                    color: kBackgroundCol,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: -kToolbarHeight / 2,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: kToolbarHeight,
+              decoration: BoxDecoration(
+                color: kBackgroundCol,
+                borderRadius: BorderRadius.circular(kToolbarHeight / 2),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -185,8 +204,8 @@ class CardShortDayDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kDefaultPadding / 2),
+    return Container(
+      width: 77,
       child: Text(
         kWeek[index].short,
         textAlign: TextAlign.center,
